@@ -1,0 +1,19 @@
+plugins {
+    id 'java-library'
+}
+
+group 'com.ximand.properties'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testCompile 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+}
