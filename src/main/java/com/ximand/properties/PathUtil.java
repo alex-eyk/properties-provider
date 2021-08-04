@@ -1,6 +1,9 @@
 package com.ximand.properties;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -14,13 +17,13 @@ public final class PathUtil {
      * @param shortenedPath Сокращенный путь, содержащий в начале jarpath:/
      * @return Полный путь к файлу, находящемуся в той же директории, что и Jar-файл
      */
-    public static String getPathFromJarDirectory(String shortenedPath, Class<?> clazz) {
+    public static InputStream getJarDirectoryFileStream(String shortenedPath, Class<?> clazz) throws FileNotFoundException {
         try {
             final URI location = clazz.getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .toURI();
-            return new File(location).getPath() + "/" + getRelativePath(shortenedPath);
+            return new FileInputStream(new File(location).getPath() + "/" + getRelativePath(shortenedPath));
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Unable to get Jar-file path", e);
         }
@@ -33,8 +36,13 @@ public final class PathUtil {
      * @throws IllegalArgumentException Если файл не найден или он не содержит сокращения (jarpath:/, libres:/ и т.д .),
      *                                  значит, что был передан неверный параметр, поэтому будет брошено исключение.
      */
+    @Deprecated
     public static String getResourcePath(String shortenedPath, ClassLoader classLoader) {
         return getResources(getRelativePath(shortenedPath), classLoader);
+    }
+
+    public static InputStream getResourceStream(String shortenedPath, ClassLoader classLoader) {
+        return classLoader.getResourceAsStream(getRelativePath(shortenedPath));
     }
 
     /**
@@ -43,8 +51,13 @@ public final class PathUtil {
      * @throws IllegalArgumentException Если файл не найден или он не содержит сокращения (jarpath:/, libres:/ и т.д .),
      *                                  значит, что был передан неверный параметр, поэтому будет брошено исключение.
      */
+    @Deprecated
     public static String getLibraryResourcePath(String shortenedPath) {
         return getResources(getRelativePath(shortenedPath), PathUtil.class.getClassLoader());
+    }
+
+    public static InputStream getLibraryResourceStream(String shortenedPath) {
+        return PathUtil.class.getClassLoader().getResourceAsStream(getRelativePath(shortenedPath));
     }
 
     private static String getResources(String res, ClassLoader classLoader) {

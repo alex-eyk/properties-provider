@@ -3,9 +3,10 @@ package com.ximand.properties;
 import com.ximand.properties.mapper.StringToRightTypeMapper;
 import com.ximand.properties.mapper.StringToRightTypeMapperImpl;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 public class PropertiesReader {
@@ -14,19 +15,17 @@ public class PropertiesReader {
 
     private final Properties properties = new Properties();
 
-    public PropertiesReader(String absolutePath) throws FileNotFoundException {
-        System.out.println(absolutePath);
-        FileReader fileReader = new FileReader(absolutePath);
+    PropertiesReader(InputStream inputStream) {
+        final BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             properties.load(fileReader);
             fileReader.close();
         } catch (IOException e) {
-            throw new IllegalStateException("Exception while reading properties " +
-                    "file with path: " + absolutePath, e);
+            throw new IllegalStateException("Exception while reading properties", e);
         }
     }
 
-    public Object getPropertyOrDefault(String name, String def, Class<?> valueClass) {
+    Object getPropertyOrDefault(String name, String def, Class<?> valueClass) {
         String value = properties.getProperty(name);
         if (value != null) {
             return toRightTypeMapper.map(value, valueClass);

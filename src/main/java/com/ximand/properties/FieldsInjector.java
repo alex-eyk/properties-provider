@@ -1,6 +1,8 @@
 package com.ximand.properties;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,12 +11,12 @@ public class FieldsInjector<T> {
 
     private final Class<T> configClass;
     private final String propertiesPath;
-
     private final T configObject;
+    private InputStream propertiesInputStream;
 
     public FieldsInjector(Class<T> configClass, String propertiesPath) {
         this.configClass = configClass;
-        this.propertiesPath = getAbsolutePath(propertiesPath);
+        this.propertiesPath = propertiesPath;
         try {
             this.configObject = configClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -23,20 +25,10 @@ public class FieldsInjector<T> {
         }
     }
 
-    private String getAbsolutePath(String path) {
-        if (path.startsWith("jarpath:/")) {
-            return PathUtil.getPathFromJarDirectory(path, configClass);
-        } else if (path.startsWith("libres:/")) {
-            return PathUtil.getLibraryResourcePath(path);
-        } else if (path.startsWith("res:/")) {
-            return PathUtil.getResourcePath(path, configClass.getClassLoader());
-        }
-        return path;
-    }
-
     public T inject() {
         final Map<Property, Field> propertyToFieldMap = getPropertyToFieldMap();
         try {
+            this.propertiesInputStream = getInputStream(propertiesPath);
             readProperties(propertyToFieldMap);
         } catch (FileNotFoundException e) {
             createNewProperties(propertyToFieldMap);
@@ -44,15 +36,26 @@ public class FieldsInjector<T> {
         return configObject;
     }
 
-    private void readProperties(Map<Property, Field> propertyToFieldMap) throws FileNotFoundException {
-        final PropertiesReader reader = new PropertiesReader(propertiesPath);
+    private InputStream getInputStream(String path) throws FileNotFoundException {
+        if (path.startsWith("jarpath:/")) {
+            return PathUtil.getJarDirectoryFileStream(path, configClass);
+        } else if (path.startsWith("libres:/")) {
+            return PathUtil.getLibraryResourceStream(path);
+        } else if (path.startsWith("res:/")) {
+            return PathUtil.getResourceStream(path, configClass.getClassLoader());
+        }
+        return new FileInputStream(path);
+    }
+
+    private void readProperties(Map<Property, Field> propertyToFieldMap) {
+        final PropertiesReader reader = new PropertiesReader(propertiesInputStream);
         propertyToFieldMap.forEach(
                 (property, field) -> injectPropertyFromFile(reader, property, field)
         );
     }
 
     private void injectPropertyFromFile(PropertiesReader reader, Property property, Field field) {
-        Object value = reader.getPropertyOrDefault(property.name(), property.defaultValue(), field.getType());
+        final Object value = reader.getPropertyOrDefault(property.name(), property.defaultValue(), field.getType());
         injectProperty(field, value);
     }
 
