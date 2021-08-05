@@ -1,16 +1,17 @@
 package com.ximand.properties;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
-public final class PathUtil {
+public final class PathUtils {
 
-    private PathUtil() {
+    private PathUtils() {
+    }
+
+    public static String getJarDirectoryFilePath(String shortenedPath, Class<?> clazz) {
+        return JarUtils.getFileFromJarDirectoryPath(getRelativePath(shortenedPath), clazz);
     }
 
     /**
@@ -18,15 +19,7 @@ public final class PathUtil {
      * @return Полный путь к файлу, находящемуся в той же директории, что и Jar-файл
      */
     public static InputStream getJarDirectoryFileStream(String shortenedPath, Class<?> clazz) throws FileNotFoundException {
-        try {
-            final URI location = clazz.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .toURI();
-            return new FileInputStream(new File(location).getPath() + "/" + getRelativePath(shortenedPath));
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Unable to get Jar-file path", e);
-        }
+        return new FileInputStream(getJarDirectoryFilePath(shortenedPath, clazz));
     }
 
     /**
@@ -53,11 +46,11 @@ public final class PathUtil {
      */
     @Deprecated
     public static String getLibraryResourcePath(String shortenedPath) {
-        return getResources(getRelativePath(shortenedPath), PathUtil.class.getClassLoader());
+        return getResources(getRelativePath(shortenedPath), PathUtils.class.getClassLoader());
     }
 
     public static InputStream getLibraryResourceStream(String shortenedPath) {
-        return PathUtil.class.getClassLoader().getResourceAsStream(getRelativePath(shortenedPath));
+        return PathUtils.class.getClassLoader().getResourceAsStream(getRelativePath(shortenedPath));
     }
 
     private static String getResources(String res, ClassLoader classLoader) {

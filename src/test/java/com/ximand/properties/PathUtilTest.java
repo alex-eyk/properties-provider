@@ -6,6 +6,4 @@ import org.junit.jupiter.api.Test;
 
 class PathUtilTest {
 
-
-
 }

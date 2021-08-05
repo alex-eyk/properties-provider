@@ -38,11 +38,11 @@ public class FieldsInjector<T> {
 
     private InputStream getInputStream(String path) throws FileNotFoundException {
         if (path.startsWith("jarpath:/")) {
-            return PathUtil.getJarDirectoryFileStream(path, configClass);
+            return PathUtils.getJarDirectoryFileStream(path, configClass);
         } else if (path.startsWith("libres:/")) {
-            return PathUtil.getLibraryResourceStream(path);
+            return PathUtils.getLibraryResourceStream(path);
         } else if (path.startsWith("res:/")) {
-            return PathUtil.getResourceStream(path, configClass.getClassLoader());
+            return PathUtils.getResourceStream(path, configClass.getClassLoader());
         }
         return new FileInputStream(path);
     }
@@ -60,7 +60,7 @@ public class FieldsInjector<T> {
     }
 
     private void createNewProperties(Map<Property, Field> propertyToFieldMap) {
-        final PropertiesWriter writer = new PropertiesWriter(propertiesPath);
+        final PropertiesWriter writer = new PropertiesWriter(PathUtils.getJarDirectoryFilePath(propertiesPath, configClass));
         propertyToFieldMap.forEach(
                 (property, field) -> injectPropertyFromNewFile(writer, property, field)
         );
