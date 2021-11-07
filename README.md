@@ -1,9 +1,9 @@
 # properties-provider
-Библиотека для простой загрузки properties-файлов и работы с файлами в директории с .jar файлом
+Library for easily loading properties files and working with files in a directory with a .jar file
 
-## Загрузка .properties файлов
-### 1. Создание класса
-Для начала необходимо создать класс с теми же полями, которые будут находиться в .properties файле. Пример:
+## Loading .properties files
+### 1. Create class
+First, you need to create a class with the same fields that will be in the .properties file. Example:
 ```java
     @PropertiesPath("jarpath:/config.properties")
     public class Config {
@@ -17,18 +17,18 @@
         
     }
 ```
-В данном случае .properties файл находиться в той же папке, что и .jar файл и называется config.properties. В случае, если файл должен находиться в папке с ресурсами приложения, путь к нему должен быть записан следующим образом: res:/config.properties. Файл содержит одно поле с ключом server.threads, имеющим числовое значение.
-В случае, если такого файла не существует, он будет создан автоматически при помощи стандартных значений.
+In this case, the .properties file is located in the same folder as the .jar file and it's name – config.properties. If the file located in the folder with application resources, the path should be written as follows: res:/config.properties. The file from example contains one field with the server.threads key, which has an integer value.
+If such a file does not exist, it will be created automatically using default values.
 
-### 2. Создание объекта
-Для того, чтобы создать объекто необходимого класса, необходимо воспользоваться методом createInstance объекта PropertiesProvider, передав ему в качестве аргумента класс, сущность которого необходимо создать.
+### 2. Create instance of class
+To create an instance of previously created class, you should use method createInstance of the PropertiesProvider object, passing it as an argument the class whose instance you want to create.
 ```java
     final PropertiesProvider propertiesProvider = new PropertiesProvider();
     final Config config = propertiesProvider.createInstance(Config.class);
 ```
 
-## Получение файлов из директории с .jar файлом
-Для получения файлов из директории с .jar файлом используется статическая функции getFileFromJarDirectoryPath(String filename, Class<?> clazz) класса JarUtils.
+## Getting files from a directory with a .jar file
+To get files from a directory with a .jar file, use getFileFromJarDirectoryPath(String filename, Class<?> clazz) static function of the JarUtils class.
 ```java
     public class SomeClass {
     
@@ -44,8 +44,8 @@
     }
 ```
 
-## Путь к .jar файлу
-Чтобы получить путь непосредственно к .jar файлу, можно воспользоваться функцией getJarLocation(Class<?> clazz) класса JarUtils. Если класс находится в файловой системе (файл с расширением .class), то будет возвращен путь к базовой директории, иначе (если класс находиться в Jar-файле) будет возвращен путь до Jar-файла.
+## Jar file path
+You can use getJarLocation(Class<?> clazz) static function of the JarUtils class to get the path directly to the .jar file. If the class is in the file system (file with the .class extension), then the path to the base directory will be returned, otherwise (if the class is in the Jar file) the path to the Jar file will be returned.
 ```java
     public class SomeClass {
     
@@ -61,9 +61,28 @@
     }
 ```
 
-## Другие возможности
-Также класс JarUtils содержит функции File urlToFile(URL url) и File urlToFile(String url). Данные функции равносильны следующему коду:
+## Other possibilities
+JarUtils class also contains File urlToFile(URL url) and File urlToFile(String url) functions. These functions are equivalent to the following code:
 ```java
     final File file = new File(url)
 ```
-Однако функции класса JarUtils дополнительно обрабатывают ситуацию, когда url начинается с "jar:file:", возвращая путь к .jar файлу
+However, the functions of the JarUtils class additionally handle the situation when the url begins with "jar: file:" by returning the path to the .jar file.
+
+## Install
+1. Download properties-proveder.jar file from releases
+2. Move the downloaded file to the libs folder of your project. If such folder does not exist, then create it.
+3. Add dependency to your build.gradle file
+```groovy
+    dependencies {
+        implementation files('libs/PropertiesProvider-1.0.2.jar')
+    
+    }
+```
+or add all dependency from libs folder
+```groovy
+    dependencies {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+        
+    }
+```
+
