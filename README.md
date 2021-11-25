@@ -69,8 +69,8 @@ JarUtils class also contains File urlToFile(URL url) and File urlToFile(String u
 However, the functions of the JarUtils class additionally handle the situation when the url begins with "jar: file:" by returning the path to the .jar file.
 
 ## Install
-1. Download properties-proveder.jar file from releases
-2. Move the downloaded file to the libs folder of your project. If such folder does not exist, then create it.
+1. Download [latest release](https://github.com/Ximand931/properties-provider/releases/tag/v1.0.2)
+2. Move downloaded file to libs folder of your project. If such folder does not exist, create it.
 3. Add dependency to your build.gradle file
 ```groovy
     dependencies {
