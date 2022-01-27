@@ -1,9 +1,9 @@
 # properties-provider
-Library for easily loading properties files and working with files in a directory with a .jar file
+The library can help you load properties files and work with files from a directory with a .jar file.
 
 ## Loading .properties files
 ### 1. Create class
-First, you need to create a class with the same fields that will be in the .properties file. Example:
+First, you need to create a class with the same fields that the .properties file contains. Example:
 ```java
     @PropertiesPath("jarpath:/config.properties")
     public class Config {
@@ -17,11 +17,11 @@ First, you need to create a class with the same fields that will be in the .prop
         
     }
 ```
-In this case, the .properties file is located in the same folder as the .jar file and it's name – config.properties. If the file located in the folder with application resources, the path should be written as follows: res:/config.properties. The file from example contains one field with the server.threads key, which has an integer value.
+In this case, the .properties file is located in the same folder as the .jar file and its name – config.properties. If the file is located in the folder with application resources, the path should be written as follows: res:/config.properties. The file from the example contains one field with the server.threads key, which has an integer value.
 If such a file does not exist, it will be created automatically using default values.
 
 ### 2. Create instance of class
-To create an instance of previously created class, you should use method createInstance of the PropertiesProvider object, passing it as an argument the class whose instance you want to create.
+To create an instance of the previously created class, you should use the method createInstance of the PropertiesProvider object, passing it as an argument the class whose instance you want to create.
 ```java
     final PropertiesProvider propertiesProvider = new PropertiesProvider();
     final Config config = propertiesProvider.createInstance(Config.class);
@@ -70,7 +70,7 @@ However, the functions of the JarUtils class additionally handle the situation w
 
 ## Install
 1. Download [latest release](https://github.com/Ximand931/properties-provider/releases/tag/v1.0.2)
-2. Move downloaded file to libs folder of your project. If such folder does not exist, create it.
+2. Move the downloaded file to the libs folder of your project. If such folder does not exist, create it.
 3. Add dependency to your build.gradle file
 ```groovy
     dependencies {
